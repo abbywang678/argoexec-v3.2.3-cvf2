@@ -3,7 +3,7 @@ ARG GIT_COMMIT=unknown
 ARG GIT_TAG=unknown
 ARG GIT_TREE_STATE=unknown
 
-FROM golang:1.23-alpine3.19 as builder
+FROM golang:1.24-alpine3.21 as builder
 
 # libc-dev to build openapi-gen
 RUN apk update && apk add --no-cache \
@@ -91,26 +91,26 @@ ENTRYPOINT [ "argoexec" ]
 
 ####################################################################################################
 
-FROM gcr.io/distroless/static as workflow-controller
+#FROM gcr.io/distroless/static as workflow-controller
 
-USER 8737
+#USER 8737
 
-COPY hack/ssh_known_hosts /etc/ssh/
-COPY hack/nsswitch.conf /etc/
-COPY --chown=8737 --from=workflow-controller-build /go/src/github.com/argoproj/argo-workflows/dist/workflow-controller /bin/
+#COPY hack/ssh_known_hosts /etc/ssh/
+#COPY hack/nsswitch.conf /etc/
+#COPY --chown=8737 --from=workflow-controller-build /go/src/github.com/argoproj/argo-workflows/dist/workflow-controller /bin/
 
-ENTRYPOINT [ "workflow-controller" ]
+#ENTRYPOINT [ "workflow-controller" ]
 
 ####################################################################################################
 
-FROM gcr.io/distroless/static as argocli
+#FROM gcr.io/distroless/static as argocli
 
-USER 8737
+#USER 8737
 
-WORKDIR /home/argo
+#WORKDIR /home/argo
 
-COPY hack/ssh_known_hosts /etc/ssh/
-COPY hack/nsswitch.conf /etc/
-COPY --from=argocli-build /go/src/github.com/argoproj/argo-workflows/dist/argo /bin/
+#COPY hack/ssh_known_hosts /etc/ssh/
+#COPY hack/nsswitch.conf /etc/
+#COPY --from=argocli-build /go/src/github.com/argoproj/argo-workflows/dist/argo /bin/
 
-ENTRYPOINT [ "argo" ]
+#ENTRYPOINT [ "argo" ]
