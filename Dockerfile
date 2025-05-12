@@ -20,9 +20,9 @@ RUN apk update && apk add --no-cache \
 WORKDIR /go/src/github.com/argoproj/argo-workflows
 COPY go.mod .
 COPY go.sum .
-RUN --mount=type=cache,target=/go/pkg/mod go mod download
-
 COPY . .
+RUN go mod tidy
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
 ####################################################################################################
 
