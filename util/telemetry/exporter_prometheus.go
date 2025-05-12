@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"time"
 
+	adapter "github.com/argoproj/argo-workflows/v3/workflow/util/runtimeutil"
+
 	promgo "github.com/prometheus/client_golang/prometheus"
 	"go.opentelemetry.io/otel/exporters/prometheus"
 
 	// "github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
-	runtimeutil "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/utils/env"
 
 	tlsutils "github.com/argoproj/argo-workflows/v3/util/tls"
@@ -57,7 +58,7 @@ func (m *Metrics) RunPrometheusServer(ctx context.Context, isDummy bool) {
 	if !m.config.Enabled {
 		return
 	}
-	defer runtimeutil.HandleCrash(runtimeutil.PanicHandlers...)
+	defer adapter.HandleCrash(adapter.AdaptPanicHandlers(ctx)...)
 
 	name := ""
 	mux := http.NewServeMux()

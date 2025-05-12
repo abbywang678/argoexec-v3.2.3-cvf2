@@ -12,11 +12,12 @@ import (
 	"sync"
 	"time"
 
+	adapter "github.com/argoproj/argo-workflows/v3/workflow/util/runtimeutil"
+
 	log "github.com/sirupsen/logrus"
 	apierr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	runtimeutil "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
@@ -74,7 +75,7 @@ type response struct {
 }
 
 func (ae *AgentExecutor) Agent(ctx context.Context) error {
-	defer runtimeutil.HandleCrash(runtimeutil.PanicHandlers...)
+	defer adapter.HandleCrash(adapter.AdaptPanicHandlers(ctx)...)
 
 	taskWorkers := env.LookupEnvIntOr(common.EnvAgentTaskWorkers, 16)
 	requeueTime := env.LookupEnvDurationOr(common.EnvAgentPatchRate, 10*time.Second)
